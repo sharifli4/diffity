@@ -1,13 +1,21 @@
-//! Diffity → Install 'diffity' Command: links the bundled `diffity-cli` into /usr/local/bin, asking for an
-//! administrator password when that folder is not writable. The dev build installs `diffity-dev` instead.
+//! Diffity → Install 'diffity' Command: links the bundled `diffity-cli` onto PATH. macOS uses `/usr/local/bin`
+//! and asks for an administrator password when that folder is not writable. Linux uses `~/.local/bin`.
+//! The dev build installs `diffity-dev` instead.
 
 use std::path::{Path, PathBuf};
+#[cfg(target_os = "macos")]
 use std::process::Command;
 
 use tauri::{AppHandle, Runtime};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
-const BIN_DIR: &str = "/usr/local/bin";
+fn bin_dir() -> PathBuf {
+    #[cfg(target_os = "linux")]
+    if let Some(home) = std::env::var_os("HOME") {
+        return PathBuf::from(home).join(".local/bin");
+    }
+    PathBuf::from("/usr/local/bin")
+}
 
 /// `diffity`, or `diffity-dev` for the dev build so it never replaces the release's command.
 pub fn command_name() -> &'static str {
@@ -50,10 +58,12 @@ fn link_directly(cli: &Path, link: &Path) -> std::io::Result<()> {
     std::os::unix::fs::symlink(cli, link)
 }
 
+#[cfg(target_os = "macos")]
 fn applescript_string(value: &str) -> String {
     format!("\"{}\"", value.replace('\\', "\\\\").replace('"', "\\\""))
 }
 
+#[cfg(target_os = "macos")]
 fn link_as_admin(cli: &Path, link: &Path) -> Result<(), String> {
     let dir = link.parent().unwrap_or(Path::new("/usr/local/bin"));
     let script = format!(
@@ -84,14 +94,22 @@ fn shadowing(link: &Path) -> Option<PathBuf> {
 fn install() -> Result<String, String> {
     let cli = bundled_cli()?;
     let name = command_name();
-    let link_path = Path::new(BIN_DIR).join(name);
+    let dir = bin_dir();
+    let link_path = dir.join(name);
     let link = link_path.as_path();
     check_existing(link)?;
     if let Err(e) = link_directly(&cli, link) {
         if e.kind() != std::io::ErrorKind::PermissionDenied {
             return Err(e.to_string());
         }
-        link_as_admin(&cli, link)?;
+        #[cfg(target_os = "macos")]
+        {
+            link_as_admin(&cli, link)?;
+        }
+        #[cfg(not(target_os = "macos"))]
+        {
+            return Err(format!("Could not write {}: {e}", link.display()));
+        }
     }
     let mut message = format!(
         "Run `{name}` in a repository to open it in Diffity. `{name} --help` lists the options.\n\nInstalled at {}.",
@@ -99,8 +117,9 @@ fn install() -> Result<String, String> {
     );
     if let Some(other) = shadowing(link) {
         message.push_str(&format!(
-            "\n\n{} comes first in your PATH, so `{name}` runs that one. Remove it or put {BIN_DIR} before it.",
-            other.display()
+            "\n\n{} comes first in your PATH, so `{name}` runs that one. Remove it or put {} before it.",
+            other.display(),
+            dir.display()
         ));
     }
     Ok(message)
@@ -121,6 +140,7 @@ pub fn install_with_feedback<R: Runtime>(app: &AppHandle<R>) {
 mod tests {
     use super::*;
 
+    #[cfg(target_os = "macos")]
     #[test]
     fn escapes_applescript_strings() {
         assert_eq!(applescript_string(r#"/Apps/My "D"\x.app"#), r#""/Apps/My \"D\"\\x.app""#);

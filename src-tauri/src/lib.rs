@@ -3,7 +3,7 @@
 #![cfg(feature = "app")]
 
 pub mod agents;
-#[cfg(target_os = "macos")]
+#[cfg(unix)]
 mod cli_install;
 mod commands;
 pub mod core;
@@ -19,7 +19,7 @@ use std::sync::Arc;
 use crate::agents::AgentManager;
 use crate::core::store::Store;
 use crate::github::GithubService;
-use tauri::menu::{Menu, MenuItem, HELP_SUBMENU_ID};
+use tauri::menu::{Menu, MenuItem, Submenu, HELP_SUBMENU_ID};
 use tauri::{AppHandle, Emitter, EventTarget, Manager, Runtime};
 use tauri_plugin_deep_link::DeepLinkExt;
 
@@ -65,6 +65,14 @@ const INSTALL_CLI_MENU_ID: &str = "install-cli";
 /// and Report an Issue….
 fn app_menu<R: Runtime>(handle: &AppHandle<R>) -> tauri::Result<Menu<R>> {
     let menu = Menu::default(handle)?;
+    #[cfg(unix)]
+    let install = MenuItem::with_id(
+        handle,
+        INSTALL_CLI_MENU_ID,
+        format!("Install ‘{}’ Command…", cli_install::command_name()),
+        true,
+        None::<&str>,
+    )?;
     if let Some(app_submenu) = menu.items()?.first().and_then(|item| item.as_submenu().cloned()) {
         let mut position = 1;
         if !dev_build() {
@@ -72,11 +80,24 @@ fn app_menu<R: Runtime>(handle: &AppHandle<R>) -> tauri::Result<Menu<R>> {
             app_submenu.insert(&check, position)?;
             position += 1;
         }
-        #[cfg(target_os = "macos")]
+        #[cfg(unix)]
         {
-            let label = format!("Install ‘{}’ Command…", cli_install::command_name());
-            let install = MenuItem::with_id(handle, INSTALL_CLI_MENU_ID, label, true, None::<&str>)?;
             app_submenu.insert(&install, position)?;
+        }
+    } else {
+        // Linux and Windows have no application menu, so the command lives on its own Diffity menu.
+        #[cfg(unix)]
+        {
+            let whats_new = MenuItem::with_id(handle, WHATS_NEW_MENU_ID, "What’s New in Diffity", true, None::<&str>)?;
+            let report = MenuItem::with_id(handle, REPORT_ISSUE_MENU_ID, "Report an Issue…", true, None::<&str>)?;
+            let diffity = if dev_build() {
+                Submenu::with_items(handle, "Diffity", true, &[&install, &whats_new, &report])?
+            } else {
+                let check = MenuItem::with_id(handle, CHECK_UPDATES_MENU_ID, "Check for Updates…", true, None::<&str>)?;
+                Submenu::with_items(handle, "Diffity", true, &[&check, &install, &whats_new, &report])?
+            };
+            menu.append(&diffity)?;
+            return Ok(menu);
         }
     }
     let whats_new = MenuItem::with_id(handle, WHATS_NEW_MENU_ID, "What’s New in Diffity", true, None::<&str>)?;
@@ -136,7 +157,7 @@ pub fn run() {
                 emit_to_focused(app, "check-for-updates");
                 return;
             }
-            #[cfg(target_os = "macos")]
+            #[cfg(unix)]
             if event.id() == INSTALL_CLI_MENU_ID {
                 cli_install::install_with_feedback(app);
                 return;

@@ -1,7 +1,7 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { hashString } from './hash';
-import { isTauri } from './platform';
+import { isMac, isTauri } from './platform';
 
 export type RepoPage = 'diff' | 'tree' | 'overview';
 
@@ -26,8 +26,7 @@ export async function openRepoInNewWindow(path: string, extra?: Record<string, s
     height: 900,
     minWidth: 900,
     minHeight: 600,
-    titleBarStyle: 'overlay',
-    hiddenTitle: true,
+    ...(isMac ? { titleBarStyle: 'overlay' as const, hiddenTitle: true } : {}),
     backgroundColor: currentBackground(),
   });
 }

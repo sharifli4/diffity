@@ -4,6 +4,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/nilbuild/diffity?display_name=tag&sort=semver&cacheSeconds=3600)](https://github.com/nilbuild/diffity/releases/latest)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](https://github.com/nilbuild/diffity/releases/latest)
+[![Platform: Linux](https://img.shields.io/badge/platform-Linux-lightgrey)](https://github.com/sharifli4/diffity/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 Diffity is a Mac app for reviewing code changes, yours or your agent's, GitHub-style, with Claude Code in the loop.
@@ -14,6 +15,8 @@ Diffity is a Mac app for reviewing code changes, yours or your agent's, GitHub-s
 [![Report an issue](https://img.shields.io/badge/Report_an_issue-ffffff?style=for-the-badge&logo=github&logoColor=black)](https://github.com/nilbuild/diffity/issues/new/choose)
 
 macOS 13.3 or later, Apple Silicon and Intel. The AI features need [Claude Code](https://docs.claude.com/en/docs/claude-code) (logged in) and Node.js.
+
+Linux builds of this fork are on [the releases page](https://github.com/sharifli4/diffity/releases/latest): an `.AppImage` (Arch, Omarchy, and other desktops) and a `.deb`. **Diffity → Install ‘diffity’ Command…** links the command into `~/.local/bin`. GitHub sign-in uses the Secret Service, so a keyring such as `gnome-keyring` has to be unlocked. Shortcuts use Ctrl instead of ⌘. If the window is blank on Hyprland, start it with `WEBKIT_DISABLE_DMABUF_RENDERER=1`.
 
 | What can you do? | Description |
 |---|---|
