@@ -14,15 +14,36 @@ Diffity is a Mac app for reviewing code changes, yours or your agent's, GitHub-s
 [![Download for macOS](https://img.shields.io/badge/Download_for_macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/nilbuild/diffity/releases/latest)
 [![Report an issue](https://img.shields.io/badge/Report_an_issue-ffffff?style=for-the-badge&logo=github&logoColor=black)](https://github.com/nilbuild/diffity/issues/new/choose)
 
-macOS 13.3 or later, Apple Silicon and Intel. The AI features need [Claude Code](https://docs.claude.com/en/docs/claude-code) (logged in) and Node.js.
+## Installation
 
-On Linux, one command installs the app into the launcher and adds `diffity` to `~/.local/bin`:
+### Linux
+
+On Omarchy, Arch, and Ubuntu 24.04, one command installs Diffity into the app launcher and adds `diffity` to `~/.local/bin`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/sharifli4/diffity/main/scripts/install-linux.sh | sh
 ```
 
-It needs glibc 2.39 or newer (Omarchy, Arch, Ubuntu 24.04). GitHub sign-in uses the Secret Service, so a keyring such as `gnome-keyring` has to be unlocked. Shortcuts use Ctrl instead of ⌘. The launcher starts the app with `WEBKIT_DISABLE_DMABUF_RENDERER=1` so the window is not blank on Hyprland.
+Open a repository from the terminal:
+
+```bash
+cd ~/code/app
+diffity
+```
+
+The AppImage needs glibc 2.39 or newer. GitHub sign-in uses the Secret Service, so a keyring such as `gnome-keyring` has to be unlocked. Shortcuts use Ctrl instead of ⌘. The launcher starts the app with `WEBKIT_DISABLE_DMABUF_RENDERER=1` so the window is not blank on Hyprland.
+
+That command downloads the [latest Linux release](https://github.com/sharifli4/diffity/releases/latest). To install an AppImage you already downloaded:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sharifli4/diffity/main/scripts/install-linux.sh | DIFFITY_APPIMAGE=/path/to/Diffity.AppImage sh
+```
+
+### macOS
+
+macOS 13.3 or later, Apple Silicon and Intel. Download the app from the [latest macOS release](https://github.com/nilbuild/diffity/releases/latest). The AI features need [Claude Code](https://docs.claude.com/en/docs/claude-code) (logged in) and Node.js.
+
+Install the `diffity` command from the app menu: **Diffity → Install ‘diffity’ Command…**. It links the command into `/usr/local/bin`.
 
 | What can you do? | Description |
 |---|---|
@@ -102,7 +123,7 @@ It needs glibc 2.39 or newer (Omarchy, Arch, Ubuntu 24.04). GitHub sign-in uses 
 
 > Run `diffity` in any repository to open it in the app, or pass a pull request URL to review it.
 
-Install the command once from the app menu: **Diffity → Install ‘diffity’ Command…**. It links the command into `/usr/local/bin` and asks for your password if that folder needs it.
+On Linux, the [install script](#linux) puts `diffity` in `~/.local/bin`. On macOS, install the command once from the app menu: **Diffity → Install ‘diffity’ Command…**. It links the command into `/usr/local/bin` and asks for your password if that folder needs it.
 
 <img src="./.github/screenshots/install-command.png" width="320" alt="The Diffity menu with Install ‘diffity’ Command…" />
 
