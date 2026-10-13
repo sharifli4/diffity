@@ -16,7 +16,13 @@ Diffity is a Mac app for reviewing code changes, yours or your agent's, GitHub-s
 
 macOS 13.3 or later, Apple Silicon and Intel. The AI features need [Claude Code](https://docs.claude.com/en/docs/claude-code) (logged in) and Node.js.
 
-Linux builds of this fork are on [the releases page](https://github.com/sharifli4/diffity/releases/latest): an `.AppImage` (Arch, Omarchy, and other desktops) and a `.deb`. **Diffity → Install ‘diffity’ Command…** links the command into `~/.local/bin`. GitHub sign-in uses the Secret Service, so a keyring such as `gnome-keyring` has to be unlocked. Shortcuts use Ctrl instead of ⌘. If the window is blank on Hyprland, start it with `WEBKIT_DISABLE_DMABUF_RENDERER=1`.
+On Linux, one command installs the app into the launcher and adds `diffity` to `~/.local/bin`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sharifli4/diffity/main/scripts/install-linux.sh | sh
+```
+
+It needs glibc 2.39 or newer (Omarchy, Arch, Ubuntu 24.04). GitHub sign-in uses the Secret Service, so a keyring such as `gnome-keyring` has to be unlocked. Shortcuts use Ctrl instead of ⌘. The launcher starts the app with `WEBKIT_DISABLE_DMABUF_RENDERER=1` so the window is not blank on Hyprland.
 
 | What can you do? | Description |
 |---|---|

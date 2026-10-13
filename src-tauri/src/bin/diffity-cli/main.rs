@@ -207,14 +207,24 @@ fn own_bundle() -> Option<PathBuf> {
 }
 
 fn launch(url: &str) -> Result<(), String> {
-    let mut command = Command::new("open");
     if let Some(bundle) = own_bundle() {
-        command.arg("-a").arg(bundle);
+        let status = Command::new("open")
+            .arg("-a")
+            .arg(bundle)
+            .arg(url)
+            .status()
+            .map_err(|e| format!("could not run open: {e}"))?;
+        if !status.success() {
+            return Err("could not open Diffity. Is it installed?".into());
+        }
+        return Ok(());
     }
-    let status = command
+    // Linux has no `open -a`. The desktop file registered by scripts/install-linux.sh owns diffity://.
+    let opener = if cfg!(target_os = "macos") { "open" } else { "xdg-open" };
+    let status = Command::new(opener)
         .arg(url)
         .status()
-        .map_err(|e| format!("could not run open: {e}"))?;
+        .map_err(|e| format!("could not run {opener}: {e}"))?;
     if !status.success() {
         return Err("could not open Diffity. Is it installed?".into());
     }
