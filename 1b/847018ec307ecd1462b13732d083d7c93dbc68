@@ -1,0 +1,18 @@
+README.md
+  h_5f3db783c112f8 19-25
+scripts/install-linux.sh
+  h_5f3db783c112f8 1-200
+src-tauri/src/bin/diffity-cli/main.rs
+  h_5f3db783c112f8 211-220,222-224,227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b847018ec307ecd1462b13732d083d7c93dbc68",
+  "prompts": {},
+  "humans": {
+    "h_5f3db783c112f8": {
+      "author": "Kenan Sharifli <kenansharifov400@gmail.com>"
+    }
+  }
+}
