@@ -1,0 +1,14 @@
+README.md
+  h_5f3db783c112f8 17,19-21,27-46,126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "258ba6962cdda5f6b572d426b669a633181f6da2",
+  "prompts": {},
+  "humans": {
+    "h_5f3db783c112f8": {
+      "author": "Kenan Sharifli <kenansharifov400@gmail.com>"
+    }
+  }
+}
